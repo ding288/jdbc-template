@@ -462,7 +462,7 @@ public class JdbcTemplate implements JdbcOperations {
 		Object id = null;
 		try {
 			connectionClose();
-//			closePreviousStatement();
+			// closePreviousStatement();
 			st = con.createStatement();
 			st.execute(sql, Statement.RETURN_GENERATED_KEYS);
 			res = st.getGeneratedKeys();
@@ -473,7 +473,7 @@ public class JdbcTemplate implements JdbcOperations {
 			System.err.println("sql: " + sql);
 			e.printStackTrace();
 		} finally {
-//			closeResultSetAndStatement();
+			// closeResultSetAndStatement();
 			connectionClose();
 		}
 		return id;
@@ -481,7 +481,7 @@ public class JdbcTemplate implements JdbcOperations {
 
 	private ResultSet insertWithGeneratedKeyRes(String sql) {
 		try {
-//			closePreviousStatement();
+			// closePreviousStatement();
 			st = con.createStatement();
 			st.execute(sql, Statement.RETURN_GENERATED_KEYS);
 			res = st.getGeneratedKeys();
@@ -591,7 +591,7 @@ public class JdbcTemplate implements JdbcOperations {
 		sql = new StringBuilder(sq.substring(0, sq.lastIndexOf(",")));
 		sql.append(" where ").append(idName).append("='").append(idValue).append("'");
 		boolean b = executeUpdate(sql.toString());
-//		closeResultSetAndStatement();
+		// closeResultSetAndStatement();
 		return b;
 	}
 
@@ -664,7 +664,7 @@ public class JdbcTemplate implements JdbcOperations {
 		sq = sql.toString();
 		sql = new StringBuilder(sq.substring(0, sq.lastIndexOf(",")));
 		sql.append(")");
-//		boolean b = executeInsert(sql.toString());		
+		// boolean b = executeInsert(sql.toString());
 		try {
 			connectionOpen();
 			res = insertWithGeneratedKeyRes(sql.toString());
@@ -673,10 +673,10 @@ public class JdbcTemplate implements JdbcOperations {
 			}
 		} catch (IllegalArgumentException | SQLException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			connectionClose();
 		}
-//		closeResultSetAndStatement();
+		// closeResultSetAndStatement();
 		return true;
 	}
 
@@ -700,10 +700,10 @@ public class JdbcTemplate implements JdbcOperations {
 			list = SqlUtil.resultSetToList(resultClass, res);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			connectionClose();
 		}
-//		closeResultSetAndStatement();
+		// closeResultSetAndStatement();
 		return list;
 	}
 
@@ -748,7 +748,7 @@ public class JdbcTemplate implements JdbcOperations {
 			pst.execute();
 		} catch (SQLException | IllegalArgumentException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			connectionClose();
 		}
 	}
@@ -766,7 +766,7 @@ public class JdbcTemplate implements JdbcOperations {
 			pst.execute();
 		} catch (SQLException | IllegalArgumentException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			connectionClose();
 		}
 	}
@@ -789,16 +789,17 @@ public class JdbcTemplate implements JdbcOperations {
 			pst.execute();
 		} catch (SQLException | IllegalArgumentException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			connectionClose();
 		}
 	}
 
+	@Deprecated
 	public void prepareBatchExecute(String sql, List<Object[]> args) {
 		try {
-			connectionOpen();
-			pst = con.prepareStatement(sql);
+			connectionOpen();			
 			for (int i = 0; i < args.size(); i++) {
+				pst = con.prepareStatement(sql);
 				for (int j = 0; j < args.get(i).length; j++) {
 					pst.setObject(j + 1, args.get(i)[j]);
 				}
@@ -807,7 +808,7 @@ public class JdbcTemplate implements JdbcOperations {
 			pst.execute();
 		} catch (SQLException | IllegalArgumentException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			connectionClose();
 		}
 	}
