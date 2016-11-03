@@ -176,17 +176,11 @@ public class ConnectionPool {
 				pConn.setBusy(true);
 				// 测试此连接是否可用
 				/**
-				if (!testConnection(conn)) {
-					// 假如此连接不可再用了，则创建一个新的连接，
-					// 并替换此不可用的连接对象，假如创建失败，返回 null
-					try {
-						conn = newConnection();
-					} catch (SQLException e) {
-						System.out.println(" 创建数据库连接失败！ " + e.getMessage());
-						return null;
-					}
-					pConn.setConnection(conn);
-				}**/
+				 * if (!testConnection(conn)) { // 假如此连接不可再用了，则创建一个新的连接， //
+				 * 并替换此不可用的连接对象，假如创建失败，返回 null try { conn = newConnection(); }
+				 * catch (SQLException e) { System.out.println(" 创建数据库连接失败！ " +
+				 * e.getMessage()); return null; } pConn.setConnection(conn); }
+				 **/
 				break; // 己经找到一个可用的连接，退出
 			}
 		}

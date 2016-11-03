@@ -1,9 +1,14 @@
 package com.di.jdbc.template;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
 import com.di.jdbc.util.ConnectionUtil;
+import com.di.jdbc.util.ResultSetUtil;
 
 /**
  * @author di
@@ -26,7 +31,31 @@ public class JdbcMapper implements JdbcOperations {
 
 	@Override
 	public List<HashMap<String, Object>> queryForMap(String sql) {
-		return null;
+		List<HashMap<String, Object>> res = Collections.emptyList();
+		Connection c = ConnectionUtil.getConn(fileName);
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			st = c.createStatement();
+			rs = st.executeQuery(sql);
+			res = ResultSetUtil.resultSetToMapList(rs);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+					rs = null;
+				}
+				if (st != null) {
+					st.close();
+					st = null;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return res;
 	}
 
 	@Override
