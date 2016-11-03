@@ -210,14 +210,14 @@ public class JdbcTemplate implements JdbcOperations {
 	 * @param sql
 	 * @return
 	 */
-	public List<HashMap<String, String>> queryForMap(String sql) {
-		List<HashMap<String, String>> list = new ArrayList<>();
+	public List<HashMap<String, Object>> queryForMap(String sql) {
+		List<HashMap<String, Object>> list = new ArrayList<>();
 		try {
 			closePreviousStatement();
 			st = con.createStatement();
 			res = st.executeQuery(sql);
 			while (res.next()) {
-				HashMap<String, String> m = new HashMap<String, String>();
+				HashMap<String, Object> m = new HashMap<String, Object>();
 				ResultSetMetaData rsmd = res.getMetaData();
 				int columnCount = rsmd.getColumnCount();
 				for (int i = 1; i <= columnCount; i++) {
@@ -225,7 +225,7 @@ public class JdbcTemplate implements JdbcOperations {
 					if (colName == null) {
 						colName = rsmd.getColumnName(i);
 					}
-					m.put(colName, res.getString(i));
+					m.put(colName, res.getObject(i));
 				}
 				list.add(m);
 			}
@@ -754,7 +754,7 @@ public class JdbcTemplate implements JdbcOperations {
 				for (int j = 0; j < args.get(i).length; j++) {
 					pst.setObject(j + 1, args.get(i)[j]);
 				}
-				pst.addBatch();			
+				pst.addBatch();
 			}
 			pst.execute();
 		} catch (SQLException | IllegalArgumentException e) {
