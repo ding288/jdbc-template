@@ -9,7 +9,7 @@ import com.di.jdbc.template.JdbcTemplate;
 * @author di
 */
 public class JtTest {
-	int count=10000;
+	int count=100;
 	@Test
 	public void test(){
 		jt();
