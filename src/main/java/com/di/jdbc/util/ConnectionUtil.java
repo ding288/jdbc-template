@@ -4,11 +4,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import com.di.jdbc.connection.ConnectionPool;
 
 /**
@@ -35,12 +33,12 @@ public class ConnectionUtil {
 		if (!TimeoutThread.run.get()) {
 			TimeoutThread tt = new TimeoutThread();
 			ScheduledExecutorService es=new ScheduledThreadPoolExecutor(1);
-			es.scheduleAtFixedRate(tt,5, 1,TimeUnit.SECONDS);
+			es.scheduleAtFixedRate(tt,5, INTERVAL,TimeUnit.SECONDS);
 		}
 	}
 
 	public static void stopRepair() {
-		TimeoutThread.run.set(false);
+		TimeoutThread.run.set(false);	
 	}
 
 	public static void repairTimeout() {

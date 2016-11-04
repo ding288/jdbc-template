@@ -1,5 +1,6 @@
 package com.di.jdbc.template;
 
+<<<<<<< HEAD
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,9 +8,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+=======
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+>>>>>>> branch 'master' of https://github.com/ding288/jdbc-template.git
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+<<<<<<< HEAD
 import com.di.jdbc.template.annotation.Column;
 import com.di.jdbc.template.annotation.Id;
 import com.di.jdbc.template.annotation.IgnoreInsert;
@@ -20,9 +28,14 @@ import com.di.jdbc.template.annotation.Sql;
 import com.di.jdbc.template.annotation.Sqls;
 import com.di.jdbc.template.annotation.Table;
 import com.di.jdbc.template.annotation.Transient;
+=======
+>>>>>>> branch 'master' of https://github.com/ding288/jdbc-template.git
 import com.di.jdbc.util.ConnectionUtil;
 import com.di.jdbc.util.ResultSetUtil;
+<<<<<<< HEAD
 import com.di.jdbc.util.SqlUtil;
+=======
+>>>>>>> branch 'master' of https://github.com/ding288/jdbc-template.git
 
 /**
  * @author di
@@ -65,8 +78,11 @@ public class JdbcMapper implements JdbcOperations {
 					st.close();
 					st = null;
 				}
+<<<<<<< HEAD
 				ConnectionUtil.returnConn(fileName, c);
 				c = null;
+=======
+>>>>>>> branch 'master' of https://github.com/ding288/jdbc-template.git
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
