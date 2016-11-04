@@ -15,7 +15,7 @@ import com.di.jdbc.connection.ConnectionPool;
  * @author di
  */
 public class ConnectionUtil {
-	static int INTERVAL = 10;
+	static int INTERVAL = 20;
 	static Map<String, ConnectionPool> pools;
 	static AtomicBoolean runStatus=new AtomicBoolean(false);
 	static ScheduledExecutorService es=new ScheduledThreadPoolExecutor(1);
@@ -41,7 +41,7 @@ public class ConnectionUtil {
 				public void run() {
 					repairTimeout();
 				}
-			},10, INTERVAL,TimeUnit.SECONDS);	 
+			},INTERVAL, INTERVAL,TimeUnit.SECONDS);	 
 		}
 	}
 

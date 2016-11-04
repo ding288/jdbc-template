@@ -195,7 +195,8 @@ public class ConnectionPool {
 				// 假如测试表为空，试着使用此连接的 setAutoCommit() 方法
 				// 来判定连接否可用（此方法只在部分数据库可用，假如不可用 ,
 				// 抛出异常）。注重：使用测试表的方法更可靠
-				conn.setAutoCommit(true);
+				// conn.setAutoCommit(true);
+				conn.isValid(2);
 			} else { // 有测试表的时候使用测试表测试
 				// check if this connection is valid
 				Statement stmt = conn.createStatement();
@@ -243,7 +244,7 @@ public class ConnectionPool {
 			pConn = (PooledConnection) enumerate.nextElement();
 			// 假如对象忙则等 5 秒 ,5 秒后直接刷新
 			if (pConn.isBusy()) {
-				wait(5000); // 等 5 秒
+				wait(1000); // 等 1秒
 			}
 			// 关闭此连接，用一个新的连接代替它。
 			closeConnection(pConn.getConnection());
