@@ -28,7 +28,7 @@ import com.di.jdbc.util.SqlUtil;
  * @author di
  */
 public class JdbcMapper implements JdbcOperations {
-	private String fileName = "jdbc.properties";
+	protected String fileName = "jdbc.properties";
 
 	public JdbcMapper() {
 		this.init(fileName);
