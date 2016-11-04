@@ -25,6 +25,7 @@ public class PoolTest {
 		}
 		try {
 			Connection conn = connPool.getConnection();
+			conn.isValid(10);
 		} catch (SQLException ex1) {
 			ex1.printStackTrace();
 		}
