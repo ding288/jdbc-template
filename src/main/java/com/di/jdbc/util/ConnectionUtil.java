@@ -7,14 +7,18 @@ import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.di.jdbc.connection.ConnectionPool;
 
 /**
  * @author di
  */
 public class ConnectionUtil {
-	static int INTERVAL = 30;
+	static int INTERVAL = 10;
 	static Map<String, ConnectionPool> pools;
+	static AtomicBoolean runStatus=new AtomicBoolean(false);
+	static ScheduledExecutorService es=new ScheduledThreadPoolExecutor(1);
 	static {
 		if (pools == null) {
 			pools = new HashMap<String, ConnectionPool>();
@@ -30,15 +34,20 @@ public class ConnectionUtil {
 	}
 
 	public static void startRepair() {
-		if (!TimeoutThread.run.get()) {
-			TimeoutThread tt = new TimeoutThread();
-			ScheduledExecutorService es=new ScheduledThreadPoolExecutor(1);
-			es.scheduleAtFixedRate(tt,5, INTERVAL,TimeUnit.SECONDS);
+		if (!runStatus.get()) {
+			runStatus.set(true);
+			es.scheduleAtFixedRate(new Runnable() {				
+				@Override
+				public void run() {
+					repairTimeout();
+				}
+			},10, INTERVAL,TimeUnit.SECONDS);
 		}
 	}
 
 	public static void stopRepair() {
-		TimeoutThread.run.set(false);	
+		runStatus.set(false);
+		es.shutdown();
 	}
 
 	public static void repairTimeout() {
