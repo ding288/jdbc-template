@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.di.jdbc.connection.ConnectionPool;
 
@@ -12,7 +16,6 @@ import com.di.jdbc.connection.ConnectionPool;
  */
 public class ConnectionUtil {
 	static int INTERVAL = 30;
-	static boolean RUN = true;
 	static Map<String, ConnectionPool> pools;
 	static {
 		if (pools == null) {
@@ -29,15 +32,15 @@ public class ConnectionUtil {
 	}
 
 	public static void startRepair() {
-		RUN = true;
 		if (!TimeoutThread.run.get()) {
 			TimeoutThread tt = new TimeoutThread();
-			tt.start();
+			ScheduledExecutorService es=new ScheduledThreadPoolExecutor(1);
+			es.scheduleAtFixedRate(tt,5, 1,TimeUnit.SECONDS);
 		}
 	}
 
 	public static void stopRepair() {
-		RUN = false;
+		TimeoutThread.run.set(false);
 	}
 
 	public static void repairTimeout() {
@@ -73,6 +76,7 @@ public class ConnectionUtil {
 			po = pools.get(fileName);
 		} else {
 			po = createConn(fileName);
+			init(fileName);
 		}
 		try {
 			return po.getConnection();

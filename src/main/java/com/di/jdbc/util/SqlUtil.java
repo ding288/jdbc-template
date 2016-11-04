@@ -11,7 +11,13 @@ import java.util.List;
 
 import com.di.jdbc.template.annotation.Column;
 import com.di.jdbc.template.annotation.Id;
+import com.di.jdbc.template.annotation.IgnoreInsert;
+import com.di.jdbc.template.annotation.IgnoreUpdate;
+import com.di.jdbc.template.annotation.JoinColumn;
+import com.di.jdbc.template.annotation.ManyToOne;
+import com.di.jdbc.template.annotation.OneToMany;
 import com.di.jdbc.template.annotation.Table;
+import com.di.jdbc.template.annotation.Transient;
 
 /**
  * @author di:
@@ -161,6 +167,115 @@ public class SqlUtil {
 		return list;
 	}
 
+	public static String getUpdateSelecitiveSql(Object o) {
+		Field fs[] = o.getClass().getDeclaredFields();
+		String tabName;
+		if (o.getClass().isAnnotationPresent(Table.class)) {
+			tabName = o.getClass().getAnnotation(Table.class).name();
+		} else {
+			tabName = o.getClass().getSimpleName();
+		}
+		StringBuilder sql = new StringBuilder("update ").append(tabName).append(" set ");
+		String idName = "id";
+		Object idValue = null;
+		for (Field f : fs) {
+			f.setAccessible(true);
+			try {
+				if (f.get(o) == null) {
+					continue;
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e1) {
+				e1.printStackTrace();
+			}
+			try {
+				if (f.isAnnotationPresent(Id.class)) {
+					idValue = f.get(o);
+					if (f.isAnnotationPresent(Column.class)) {
+						idName = f.getAnnotation(Column.class).name();
+					} else {
+						idName = f.getName();
+					}
+				} else if (f.isAnnotationPresent(JoinColumn.class) && f.isAnnotationPresent(ManyToOne.class)) {
+				} else if (f.isAnnotationPresent(OneToMany.class)) {
+				} else if (f.isAnnotationPresent(Transient.class) || f.isAnnotationPresent(IgnoreUpdate.class)) {
+				} else if (f.isAnnotationPresent(Column.class)) {
+					sql.append(f.getAnnotation(Column.class).name()).append("=").append(SqlUtil.setSqlValue(o, f))
+							.append(",");
+				} else {
+					sql.append(f.getName()).append("=").append(SqlUtil.setSqlValue(o, f)).append(",");
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		String sq = sql.toString();
+		sql = new StringBuilder(sq.substring(0, sq.lastIndexOf(",")));
+		sql.append(" where ").append(idName).append("='").append(idValue).append("'");
+		return sql.toString();
+	}
+
+	public static String getInsertSelecitiveSql(Object o) {
+		Field fs[] = o.getClass().getDeclaredFields();
+		String tabName;
+		if (o.getClass().isAnnotationPresent(Table.class)) {
+			tabName = o.getClass().getAnnotation(Table.class).name();
+		} else {
+			tabName = o.getClass().getSimpleName();
+		}
+		StringBuilder sql = new StringBuilder("insert into ").append(tabName).append(" (");
+		StringBuilder s1 = new StringBuilder();
+		for (Field f : fs) {
+			f.setAccessible(true);
+			try {
+				if (f.get(o) == null) {
+					continue;
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e1) {
+				e1.printStackTrace();
+			}
+			try {
+				if (f.isAnnotationPresent(JoinColumn.class) && f.isAnnotationPresent(ManyToOne.class)) {
+				} else if (f.isAnnotationPresent(OneToMany.class)) {
+				} else if (f.isAnnotationPresent(Transient.class) || f.isAnnotationPresent(IgnoreInsert.class)) {
+				} else if (f.isAnnotationPresent(Column.class)) {
+					s1.append(f.getAnnotation(Column.class).name()).append(",");
+				} else {
+					s1.append(f.getName()).append(",");
+				}
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			}
+		}
+		String sq = s1.toString();
+		sql.append(sq.substring(0, sq.lastIndexOf(","))).append(")values(");
+		for (Field f : fs) {
+			f.setAccessible(true);
+			try {
+				if (f.get(o) == null) {
+					continue;
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e1) {
+				e1.printStackTrace();
+			}
+			try {
+				if (f.isAnnotationPresent(JoinColumn.class) && f.isAnnotationPresent(ManyToOne.class)) {
+				} else if (f.isAnnotationPresent(OneToMany.class)) {
+				} else if (f.isAnnotationPresent(Transient.class) || f.isAnnotationPresent(IgnoreInsert.class)) {
+				} else if (f.isAnnotationPresent(Column.class)) {
+					sql.append(SqlUtil.setSqlValue(o, f)).append(",");
+				} else {
+					sql.append(SqlUtil.setSqlValue(o, f)).append(",");
+				}
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			}
+		}
+		sq = sql.toString();
+		sql = new StringBuilder(sq.substring(0, sq.lastIndexOf(",")));
+		sql.append(")");
+		return sql.toString();
+	}
+
 	public static String getPrepareInsertSelecitiveSql(Object o) {
 		StringBuilder s = new StringBuilder("insert into ");
 		if (o.getClass().isAnnotationPresent(Table.class)) {
@@ -296,7 +411,13 @@ public class SqlUtil {
 				} else if (f.getType() == java.math.BigDecimal.class) {
 					pst.setObject(i, f.get(o));
 				} else if (f.getType() == java.util.Date.class) {
-					pst.setDate(i, (Date) f.get(o));
+					try {
+						pst.setDate(i, (Date) f.get(o));
+					} catch (ClassCastException e) {
+						// pst.setTimestamp(i, new java.sql.Timestamp(((Date)
+						// f.get(o)).getTime()));
+						pst.setObject(i, f.get(o));
+					}
 				} else if (f.getType() == String.class) {
 					pst.setString(i, (String) f.get(o));
 				} else {
