@@ -53,9 +53,9 @@ public class JdbcConfig {
 		this.username = prop.getProperty("username");
 		this.password = prop.getProperty("password");
 		this.initPoolSize = Integer
-				.valueOf(prop.getProperty("initPoolSize").isEmpty() ? "1" : prop.getProperty("initPoolSize"));
+				.valueOf(prop.getProperty("initPoolSize") == null ? "1" : prop.getProperty("initPoolSize"));
 		this.maxPoolSize = Integer
-				.valueOf(prop.getProperty("maxPoolSize").isEmpty() ? "5" : prop.getProperty("maxPoolSize"));
+				.valueOf(prop.getProperty("maxPoolSize") == null ? "5" : prop.getProperty("maxPoolSize"));
 		if (driverClassName == null)
 			System.err.println("driverClassName is null or not found");
 		if (url == null)
