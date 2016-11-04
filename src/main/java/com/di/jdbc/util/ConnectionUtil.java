@@ -31,9 +31,13 @@ public class ConnectionUtil {
 
 	public static void startRepair() {
 		if (!TimeoutThread.run.get()) {
-			TimeoutThread tt = new TimeoutThread();
 			ScheduledExecutorService es=new ScheduledThreadPoolExecutor(1);
-			es.scheduleAtFixedRate(tt,5, INTERVAL,TimeUnit.SECONDS);
+			es.scheduleAtFixedRate(new Runnable() {				
+				@Override
+				public void run() {
+					repairTimeout();
+				}
+			},5, INTERVAL,TimeUnit.SECONDS);
 		}
 	}
 
