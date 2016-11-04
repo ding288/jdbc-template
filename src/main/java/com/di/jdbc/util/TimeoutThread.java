@@ -11,6 +11,6 @@ public class TimeoutThread extends Thread {
 	@Override
 	public void run() {
 		run = new AtomicBoolean(true);
-		ConnectionUtil.repairTimeout();
+		ConnectionUtil.repairTimeout();		
 	}
 }
