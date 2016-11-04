@@ -17,8 +17,8 @@ import com.di.jdbc.connection.ConnectionPool;
 public class ConnectionUtil {
 	static int INTERVAL = 20;
 	static Map<String, ConnectionPool> pools;
-	static AtomicBoolean runStatus=new AtomicBoolean(false);
-	static ScheduledExecutorService es=new ScheduledThreadPoolExecutor(1);
+	static AtomicBoolean runStatus = new AtomicBoolean(false);
+	static ScheduledExecutorService es = new ScheduledThreadPoolExecutor(1);
 	static {
 		if (pools == null) {
 			pools = new HashMap<String, ConnectionPool>();
@@ -36,12 +36,12 @@ public class ConnectionUtil {
 	public static void startRepair() {
 		if (!runStatus.get()) {
 			runStatus.set(true);
-			es.scheduleAtFixedRate(new Runnable() {				
+			es.scheduleAtFixedRate(new Runnable() {
 				@Override
 				public void run() {
 					repairTimeout();
 				}
-			},INTERVAL, INTERVAL,TimeUnit.SECONDS);	 
+			}, INTERVAL, INTERVAL, TimeUnit.SECONDS);
 		}
 	}
 
@@ -73,10 +73,16 @@ public class ConnectionUtil {
 		pools.put(fileName, cp);
 		return cp;
 	}
-	public static void returnConn(String fileName,Connection conn){
-		ConnectionPool po=pools.get(fileName);
+
+	public static void returnConn(String fileName, Connection conn) {
+		ConnectionPool po = pools.get(fileName);
 		po.returnConnection(conn);
 	}
+
+	public static Connection getConn() {
+		return getConn("jdbc.properties");
+	}
+
 	public static Connection getConn(String fileName) {
 		ConnectionPool po;
 		if (pools.containsKey(fileName)) {
