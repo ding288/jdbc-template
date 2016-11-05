@@ -64,13 +64,24 @@ public class JdbcSimpleMapper extends JdbcMapper {
 
 	public <T> void insertObjects(List<T> os){
 		Connection conn = ConnectionUtil.getConn(fileName);
-		Statement s;
+		Statement s=null;
 		try {
 			s = conn.createStatement();
 			s.execute(SqlUtil.getInsertsSql(os));
 		} catch (SQLException e) {
 			System.out.println(SqlUtil.getInsertsSql(os));
 			e.printStackTrace();
+		}finally {
+			if(s!=null){
+				try {
+					s.close();
+					s=null;
+					ConnectionUtil.returnConn(fileName, conn);
+					conn=null;
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 

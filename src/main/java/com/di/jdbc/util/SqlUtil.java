@@ -1,10 +1,11 @@
 package com.di.jdbc.util;
 
 import java.lang.reflect.Field;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -376,7 +377,7 @@ public class SqlUtil {
 				} else if (f.getType() == java.math.BigDecimal.class) {
 					pst.setObject(i, f.get(o));
 				} else if (f.getType() == java.util.Date.class) {
-					pst.setDate(i, (Date) f.get(o));
+					pst.setDate(i,new java.sql.Date(((Date) f.get(o)).getTime()));
 				} else if (f.getType() == String.class) {
 					pst.setString(i, (String) f.get(o));
 				} else {
@@ -415,7 +416,7 @@ public class SqlUtil {
 					pst.setObject(i, f.get(o));
 				} else if (f.getType() == java.util.Date.class) {
 					try {
-						pst.setDate(i, (Date) f.get(o));
+						pst.setTimestamp(i,new Timestamp(((Date) f.get(o)).getTime()));
 					} catch (ClassCastException e) {
 						// pst.setTimestamp(i, new java.sql.Timestamp(((Date)
 						// f.get(o)).getTime()));
