@@ -62,6 +62,18 @@ public class JdbcSimpleMapper extends JdbcMapper {
 		st.execute(SqlUtil.getInsertSelecitiveSql(o));
 	}
 
+	public <T> void insertObjects(List<T> os){
+		Connection conn = ConnectionUtil.getConn(fileName);
+		Statement s;
+		try {
+			s = conn.createStatement();
+			s.execute(SqlUtil.getInsertsSql(os));
+		} catch (SQLException e) {
+			System.out.println(SqlUtil.getInsertsSql(os));
+			e.printStackTrace();
+		}
+	}
+
 	public void deleteObject(Object o) throws SQLException {
 		con = getCon();
 		st = con.createStatement();
