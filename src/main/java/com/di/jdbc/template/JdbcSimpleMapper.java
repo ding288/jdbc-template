@@ -62,22 +62,51 @@ public class JdbcSimpleMapper extends JdbcMapper {
 		st.execute(SqlUtil.getInsertSelecitiveSql(o));
 	}
 
-	public <T> void insertObjects(List<T> os){
+	public <T> void insertObjects(List<T> os) {
 		Connection conn = ConnectionUtil.getConn(fileName);
-		Statement s=null;
+		Statement s = null;
 		try {
 			s = conn.createStatement();
 			s.execute(SqlUtil.getInsertsSql(os));
 		} catch (SQLException e) {
 			System.out.println(SqlUtil.getInsertsSql(os));
 			e.printStackTrace();
-		}finally {
-			if(s!=null){
+		} finally {
+			if (s != null) {
 				try {
 					s.close();
-					s=null;
+					s = null;
 					ConnectionUtil.returnConn(fileName, conn);
-					conn=null;
+					conn = null;
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public <T> void insertMillionObjects(List<T> os, int batchSize) {
+		Connection conn = ConnectionUtil.getConn(fileName);
+		Statement s = null;
+		try {
+			s = conn.createStatement();
+			int offset = 0;
+			while (offset < os.size()) {
+				s.addBatch(SqlUtil.getInsertsSql(
+						os.subList(offset, (offset + batchSize) > os.size() ? os.size() : (offset + batchSize))));
+				offset += batchSize;
+			}
+			s.executeBatch();
+		} catch (SQLException e) {
+			System.out.println(SqlUtil.getInsertsSql(os));
+			e.printStackTrace();
+		} finally {
+			if (s != null) {
+				try {
+					s.close();
+					s = null;
+					ConnectionUtil.returnConn(fileName, conn);
+					conn = null;
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
