@@ -98,4 +98,46 @@ public class ExampleUtil {
 		}
 		return s.toString();
 	}
+
+	public static String countByExample(Object e, Class<?> t) {
+		StringBuilder s = new StringBuilder();
+		try {
+			Field orderByClause = e.getClass().getDeclaredField("orderByClause");
+			Field distinct = e.getClass().getDeclaredField("distinct");
+			Field oredCriteria = e.getClass().getDeclaredField("oredCriteria");
+			orderByClause.setAccessible(true);
+			distinct.setAccessible(true);
+			oredCriteria.setAccessible(true);
+			String table = t.getSimpleName();
+			if (t.isAnnotationPresent(Table.class)) {
+				table = t.getDeclaredAnnotation(Table.class).name();
+			}
+			s.append("select count(0) from ").append(table).append(" where 1=1 and ");
+			s.append(whereExampleSql(e, t));
+			s.append(orderByClause.get(e));
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e1) {
+			e1.printStackTrace();
+		}
+		return s.toString();
+	}
+	public static <T> String deleteByExample(Object e,Class<T> t){
+		StringBuilder s = new StringBuilder();
+		try {
+			Field orderByClause = e.getClass().getDeclaredField("orderByClause");
+			Field distinct = e.getClass().getDeclaredField("distinct");
+			Field oredCriteria = e.getClass().getDeclaredField("oredCriteria");
+			orderByClause.setAccessible(true);
+			distinct.setAccessible(true);
+			oredCriteria.setAccessible(true);
+			String table = t.getSimpleName();
+			if (t.isAnnotationPresent(Table.class)) {
+				table = t.getDeclaredAnnotation(Table.class).name();
+			}
+			s.append("delete from ").append(table).append(" where 1=1 and ");
+			s.append(whereExampleSql(e, t));
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException e1) {
+			e1.printStackTrace();
+		}
+		return s.toString();
+	}
 }

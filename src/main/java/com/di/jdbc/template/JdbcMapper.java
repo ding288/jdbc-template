@@ -29,6 +29,7 @@ import com.di.jdbc.util.SqlUtil;
  */
 public class JdbcMapper implements JdbcOperations {
 	protected String fileName = "jdbc.properties";
+	String sqlType = "";
 
 	public JdbcMapper() {
 		this.init(fileName);
@@ -39,7 +40,7 @@ public class JdbcMapper implements JdbcOperations {
 		this.init(fileName);
 	}
 
-	public void init(String fileName) {
+	protected void init(String fileName) {
 		ConnectionUtil.init(fileName);
 	}
 
@@ -155,6 +156,36 @@ public class JdbcMapper implements JdbcOperations {
 			}
 		}
 		return null;
+	}
+
+	public boolean execute(String sql) {
+		boolean b=false;
+		Connection c = ConnectionUtil.getConn(fileName);
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			st = c.createStatement();
+			b=st.execute(sql);
+		} catch (Exception e) {
+			System.err.println("sql: " + sql);
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+					rs = null;
+				}
+				if (st != null) {
+					st.close();
+					st = null;
+				}
+				ConnectionUtil.returnConn(fileName, c);
+				c = null;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return b;
 	}
 
 	@Override

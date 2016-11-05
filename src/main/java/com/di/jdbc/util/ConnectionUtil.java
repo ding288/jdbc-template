@@ -17,6 +17,7 @@ import com.di.jdbc.connection.ConnectionPool;
 public class ConnectionUtil {
 	static int INTERVAL = 20;
 	static Map<String, ConnectionPool> pools;
+	static Map<String, String> sqlTypes = new HashMap<>();
 	static AtomicBoolean runStatus = new AtomicBoolean(false);
 	static ScheduledExecutorService es = new ScheduledThreadPoolExecutor(1);
 	static {
@@ -71,6 +72,7 @@ public class ConnectionUtil {
 			e.printStackTrace();
 		}
 		pools.put(fileName, cp);
+		sqlTypes.put(fileName, SqlTypeUtil.get(c.getUrl()));
 		return cp;
 	}
 

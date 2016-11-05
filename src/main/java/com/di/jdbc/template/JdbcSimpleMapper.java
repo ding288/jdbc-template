@@ -6,6 +6,8 @@ import java.sql.Statement;
 import java.util.List;
 import com.di.jdbc.util.ConnectionUtil;
 import com.di.jdbc.util.ExampleUtil;
+import com.di.jdbc.util.Pager;
+import com.di.jdbc.util.PagerSqlUtil;
 import com.di.jdbc.util.SqlUtil;
 
 /**
@@ -66,11 +68,25 @@ public class JdbcSimpleMapper extends JdbcMapper {
 		st.execute(SqlUtil.getDeleteSql(o));
 	}
 
-	public <T> List<T> selectByExample(Object e,Class<T> t) {
-		return queryForList(ExampleUtil.selectByExample(e,t), t);
+	public <T> List<T> selectByExample(Object e, Class<T> t) {
+		return queryForList(ExampleUtil.selectByExample(e, t), t);
 	}
 
-	void countByExample() {}
+	public <T> long countByExample(Object e, Class<T> t) {
+		return queryForSingleValue(ExampleUtil.countByExample(e, t), long.class);
+	}
 
-	void deleteByExample(){}
+	public <T> void deleteByExample(Object e, Class<T> t) {
+		execute(ExampleUtil.deleteByExample(e, t));
+	}
+
+	public <T> Pager<T> queryPager(String sql, int pageNum, int pageSize, Class<T> t) {
+		Pager<T> p = new Pager<>();
+		String sql0 = "select count(0) " + sql.substring(sql.indexOf("from"));
+		p.setPageNum(pageNum);
+		p.setPageSize(pageSize);
+		p.setTotal(this.queryForSingleValue(sql0, long.class));
+		p.setList(queryForList(PagerSqlUtil.getPageSql(sql, pageNum, pageSize, fileName), t));
+		return p;
+	}
 }
