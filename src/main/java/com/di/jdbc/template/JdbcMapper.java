@@ -97,6 +97,7 @@ public class JdbcMapper implements JdbcOperations {
 				list.add(obj);
 			}
 		} catch (Exception e) {
+			System.err.println(sql);
 			e.printStackTrace();
 		} finally {
 			try {

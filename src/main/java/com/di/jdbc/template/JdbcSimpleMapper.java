@@ -3,8 +3,9 @@ package com.di.jdbc.template;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+import java.util.List;
 import com.di.jdbc.util.ConnectionUtil;
+import com.di.jdbc.util.ExampleUtil;
 import com.di.jdbc.util.SqlUtil;
 
 /**
@@ -64,4 +65,12 @@ public class JdbcSimpleMapper extends JdbcMapper {
 		st = con.createStatement();
 		st.execute(SqlUtil.getDeleteSql(o));
 	}
+
+	public <T> List<T> selectByExample(Object e,Class<T> t) {
+		return queryForList(ExampleUtil.selectByExample(e,t), t);
+	}
+
+	void countByExample() {}
+
+	void deleteByExample(){}
 }
