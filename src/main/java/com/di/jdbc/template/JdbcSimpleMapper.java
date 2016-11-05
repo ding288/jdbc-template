@@ -59,4 +59,9 @@ public class JdbcSimpleMapper extends JdbcMapper {
 		st.execute(SqlUtil.getInsertSelecitiveSql(o));
 	}
 
+	public void deleteObject(Object o) throws SQLException {
+		con = getCon();
+		st = con.createStatement();
+		st.execute(SqlUtil.getDeleteSql(o));
+	}
 }

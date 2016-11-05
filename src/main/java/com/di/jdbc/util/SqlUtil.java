@@ -431,4 +431,29 @@ public class SqlUtil {
 			e.printStackTrace();
 		}
 	}
+
+	public static String getDeleteSql(Object o) {
+		String table = o.getClass().getSimpleName();
+		if (o.getClass().isAnnotationPresent(Table.class)) {
+			table = o.getClass().getAnnotation(Table.class).name();
+		}
+		String idName = "";
+		Object idValue = null;
+		for (Field f : o.getClass().getDeclaredFields()) {
+			if (f.isAnnotationPresent(Id.class)) {
+				f.setAccessible(true);
+				if (f.isAnnotationPresent(Column.class)) {
+					idName = f.getAnnotation(Column.class).name();
+				} else {
+					idName = f.getName();
+				}
+				try {
+					idValue = f.get(o);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return ("delete from " + table + " where " + idName + "=" + idValue);
+	}
 }
